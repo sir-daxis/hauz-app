@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home page</title>
+</head>
+<body>
+    <form action="" method="post">
+        {% csrf_token %}
+        <h2>Hello world, I am Home</h2>
+        {{ form.as_p }}
+        <input type="submit" value="Create Meeting">
+    </form>
+</body>
+</html>
