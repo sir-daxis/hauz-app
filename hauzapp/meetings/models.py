@@ -15,7 +15,7 @@ class Meeting(models.Model):
     updated = models.DateTimeField(auto_now=True)
     duration = models.PositiveIntegerField(blank=True, null=True)
     starting_date_time = models.DateTimeField()
-    ending_date_time = models.DateTimeField(blank=True, null=True)
+    ending_date_time = models.DateTimeField()
     unique_meeting_name = models.TextField(blank=True, null=True)
 
     def __str__(self):
@@ -24,6 +24,8 @@ class Meeting(models.Model):
     def save(self, *args, **kwargs):
         if self.duration:
             self.ending_date_time = self.starting_date_time + timedelta(minutes=self.duration)
+        elif not self.ending_date_time:
+            self.ending_date_time = self.starting_date_time + timedelta(hours=1)
 
         if not self.unique_meeting_name:
             self.unique_meeting_name = slugify(str(self.title_of_meeting)

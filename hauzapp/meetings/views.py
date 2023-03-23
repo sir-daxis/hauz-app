@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponseRedirect
+from django.shortcuts import render, HttpResponseRedirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views import generic
@@ -36,7 +36,7 @@ class MeetingList(generic.ListView):
 
 def meeting(request, unique_meeting_name):
     message = None
-    meeting = Meeting.objects.get(unique_meeting_name=unique_meeting_name)
+    meeting = get_object_or_404(Meeting, unique_meeting_name=unique_meeting_name)
 
     if not meeting.meeting_time:
         now = timezone.localtime()
