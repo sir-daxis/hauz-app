@@ -7,9 +7,10 @@ from datetime import timedelta
 
 
 # Create your models here.
-
+DEFAULT_HOST_ID = 1
 class Meeting(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
+    host = models.ForeignKey(User, related_name='host', on_delete=models.CASCADE, default=DEFAULT_HOST_ID)
     title_of_meeting = models.CharField(max_length=150)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -31,6 +32,9 @@ class Meeting(models.Model):
             self.unique_meeting_name = slugify(str(self.title_of_meeting)
                                                + '-'
                                                + str(uuid.uuid4()))
+
+        if not self.host:
+            self.host = 1
 
         return super(Meeting, self).save()
 

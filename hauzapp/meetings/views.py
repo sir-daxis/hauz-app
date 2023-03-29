@@ -1,16 +1,18 @@
 from django.shortcuts import render, HttpResponseRedirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.utils.decorators import method_decorator
 from django.views import generic
 from django.urls import reverse
 from django.utils import timezone
-import datetime
+from django.http import Http404
 
 from .forms import MeetingCreateForm
 from .models import Meeting
 
 
 # Create your views here.
+@login_required
 def home(request):
     form = MeetingCreateForm()
     if request.method == 'POST':
@@ -24,7 +26,6 @@ def home(request):
 
     return render(request, 'meetings/home.html', {'form': form})
 
-
 class MeetingList(generic.ListView):
     model = Meeting
     template_name = 'meetings/meeting_list.html'
@@ -33,10 +34,17 @@ class MeetingList(generic.ListView):
     def get_queryset(self):
         return Meeting.objects.filter(creator=self.request.user).order_by('-starting_date_time')
 
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(MeetingList, self).dispatch(request, *args, **kwargs)
 
+@login_required
 def meeting(request, unique_meeting_name):
     message = None
     meeting = get_object_or_404(Meeting, unique_meeting_name=unique_meeting_name)
+
+    if meeting.creator != request.user or meeting.host != request.user:
+        raise Http404
 
     if not meeting.meeting_time:
         now = timezone.localtime()
@@ -60,7 +68,7 @@ def meeting(request, unique_meeting_name):
 
         return HttpResponseRedirect(reverse('meetings:home'))
 
-    if request.user == meeting.creator:
+    if request.user == meeting.host:
         """render the view for meeting host"""
         return render(request, 'meetings/host_page.html', {'meeting': meeting})
 

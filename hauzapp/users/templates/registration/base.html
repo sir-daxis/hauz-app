@@ -2,23 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Home page</title>
+    <title>Title</title>
 </head>
 <body>
-<h2>Hello {{ user.username }}, I am Home</h2>
+    <h2>main page</h2>
+    <p>
+        {% if user.is_authenticated %}
+            Hi, {{ user.username }}
             <a href="{% url 'users:logout' %}">
                 Log out
             </a>
+        {% else %}
             <a href="{% url 'users:register' %}">
                 Register
             </a>
             <a href="{% url 'users:login' %}">
                 Log in
             </a>
-    <form action="" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Create Meeting">
-    </form>
+        {% endif %}
+    </p>
+    {% block head %}{% endblock head %}
 </body>
 </html>
