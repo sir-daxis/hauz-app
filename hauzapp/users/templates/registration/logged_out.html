@@ -1,8 +1,11 @@
-{% extends 'registration/base.html' %}
+{% extends 'dashboard/layouts/auth_base.html' %}
 
-{% block head %}
-    <p>
-        You have been logged out.
-        Thank you for visiting!
-    </p>
-{% endblock head %}
+{% block content %}
+<p>
+    You have been logged out.
+    Thank you for visiting!
+</p>
+<a class="btn btn-primary btn-user btn-block" href="{% url 'dashboard:login_user' %}">
+    Login
+</a>
+{% endblock content %}

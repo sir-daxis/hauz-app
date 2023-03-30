@@ -1,4 +1,4 @@
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordResetForm
 from django.contrib.auth.models import User
 from django import forms
 
@@ -47,3 +47,12 @@ class LoginUserForm(AuthenticationForm):
         self.fields['password'].widget.attrs['class'] = 'form-control form-control-user'
         self.fields['password'].widget.attrs['id'] = 'examplePassword'
         self.fields['password'].widget.attrs['placeholder'] = 'Password'
+
+
+class UserPasswordResetForm(PasswordResetForm):
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': "form-control form-control-user",
+                                                     'placeholder': "Enter Email Address..."}))
+
+    class Meta:
+        model = User
+        fields = ('email',)

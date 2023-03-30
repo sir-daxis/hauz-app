@@ -138,5 +138,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Redirect URL for unlogged users
 
-LOGIN_URL = 'users:login'
+LOGIN_URL = 'dashboard:login_user'
 LOGIN_REDIRECT_URL = 'dashboard:home'

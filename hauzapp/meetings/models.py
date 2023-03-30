@@ -25,8 +25,9 @@ class Meeting(models.Model):
     def save(self, *args, **kwargs):
         if self.duration:
             self.ending_date_time = self.starting_date_time + timedelta(minutes=self.duration)
-        elif not self.ending_date_time:
+        else:
             self.ending_date_time = self.starting_date_time + timedelta(hours=1)
+            self.duration = 60
 
         if not self.unique_meeting_name:
             self.unique_meeting_name = slugify(str(self.title_of_meeting)

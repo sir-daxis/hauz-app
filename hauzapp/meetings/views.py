@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponseRedirect, get_object_or_404
+from django.shortcuts import render, HttpResponseRedirect, get_object_or_404, get_list_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.decorators import method_decorator
@@ -13,7 +13,7 @@ from .models import Meeting
 
 # Create your views here.
 @login_required
-def home(request):
+def create_meeting(request):
     form = MeetingCreateForm()
     if request.method == 'POST':
         form = MeetingCreateForm(request.POST)
@@ -24,7 +24,7 @@ def home(request):
 
             return HttpResponseRedirect(reverse('meetings:meeting_list'))
 
-    return render(request, 'meetings/home.html', {'form': form})
+    return render(request, 'meetings/create_meeting.html', {'form': form})
 
 class MeetingList(generic.ListView):
     model = Meeting
@@ -39,11 +39,18 @@ class MeetingList(generic.ListView):
         return super(MeetingList, self).dispatch(request, *args, **kwargs)
 
 @login_required
+def meeting_list(request, message=None):
+    """View only for reverse in view metting. Can be deleted after adding message showing utilities in MeetingList"""
+    meetings = Meeting.objects.filter(creator=request.user).order_by('-starting_date_time')
+
+    return render(request, 'meetings/meeting_list.html', {'meetings': meetings, 'message': message})
+
+@login_required
 def meeting(request, unique_meeting_name):
     message = None
     meeting = get_object_or_404(Meeting, unique_meeting_name=unique_meeting_name)
 
-    if meeting.creator != request.user or meeting.host != request.user:
+    if not (meeting.creator == request.user or meeting.host == request.user):
         raise Http404
 
     if not meeting.meeting_time:
@@ -55,7 +62,7 @@ def meeting(request, unique_meeting_name):
                    f'{hours_get}:{minutes_get}:{seconds_get}.')
         messages.warning(request, message)
 
-        return HttpResponseRedirect(reverse('meetings:home'))
+        return HttpResponseRedirect(reverse(viewname='meetings:meeting_list_message', args=(message,)))
 
     elif meeting.after_meeting:
         now = timezone.localtime()
@@ -66,7 +73,7 @@ def meeting(request, unique_meeting_name):
                    f'{hours_get}:{minutes_get}:{seconds_get} ago.')
         messages.warning(request, message)
 
-        return HttpResponseRedirect(reverse('meetings:home'))
+        return HttpResponseRedirect(reverse(viewname='meetings:meeting_list_message', args=(message,)))
 
     if request.user == meeting.host:
         """render the view for meeting host"""

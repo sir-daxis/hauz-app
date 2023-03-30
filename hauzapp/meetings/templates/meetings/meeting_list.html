@@ -1,36 +1,75 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Meeting list</title>
-</head>
-<body>
-    <table>
-        <thead>
-        <tr>
-            <th>Creator</th>
-            <th>Title</th>
-            <th>Created</th>
-            <th>Starting Date & Time</th>
-        </tr>
-        </thead>
-        {% for meeting in meetings %}
-        <tbody>
-        <tr>
-        <td>{{meeting.creator}}</td>
-        <td>{{meeting.title_of_meeting}}</td>
-        <td>{{meeting.created}}</td>
-        <td>{{meeting.starting_date_time}}</td>
-        <td>{{meeting.ending_date_time}}</td>
-        <td><a href="{% url 'meetings:meeting' meeting.unique_meeting_name %}">Join Meeting</a>
-        <td><input type="hidden" name="meeting_{{forloop.counter}}" id="{{meeting.id}}" value="{{ request.scheme }}://{{ request.get_host }}{% url 'meetings:meeting' meeting.unique_meeting_name %}" id="meeting_link">
-            <button onclick="myFunction('{{meeting.id}}')">Copy Link</button></td>
-        </tr>
-        </tbody>
-        {% endfor %}
-    </table>
+{% extends 'dashboard/layouts/base.html' %}
 
-    <script>
+{% block content %}
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">Meeting table</h1>
+    <p class="mb-4">Here you can find the table consists of all of your meeting in our app. If you want to create the
+        new one, click <a href="{% url meeting:new_meeting}"
+                          target="_blank">here</a>.</p>
+    {% if message %}
+    <div class="alert alert-danger">
+        {{ message }}
+    </div>
+    {% endif %}
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Meetings</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table cellspacing="0" class="table table-bordered" id="dataTable" width="100%">
+                    <thead>
+                    <tr>
+                    <tr>
+                        <th>Title</th>
+                        <th>Starting Date & Time</th>
+                        <th>Duration</th>
+                        <th>Architect</th>
+                    </tr>
+                    </thead>
+                    {% for meeting in meetings %}
+                    <tbody>
+                    <tr>
+                        <td>{{meeting.title_of_meeting}}</td>
+                        <td>{{meeting.starting_date_time}}</td>
+                        <td>{{meeting.duration}}</td>
+                        <td>{{meeting.host.first_name}} {{meeting.host.last_name}}</td>
+                        <td><input id="{{meeting.id}}" id="meeting_link" name="meeting_{{forloop.counter}}"
+                                   type="hidden"
+                                   value="{{ request.scheme }}://{{ request.get_host }}{% url 'meetings:meeting' meeting.unique_meeting_name %}">
+
+                            <button class="btn btn-light btn-icon-split" onclick="myFunction('{{meeting.id}}')">
+                                    <span class="icon text-gray-600">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </span>
+                                <span class="text">Copy Link</span>
+                            </button>
+                        </td>
+                        <td><a class="btn btn-primary btn-icon-split"
+                               href="{% url 'meetings:meeting' meeting.unique_meeting_name %}">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-flag"></i>
+                                        </span>
+                            <span class="text">Join Meeting</span></a>
+                        </td>
+                    </tr>
+                    </tbody>
+                    {% endfor %}
+                </table>
+                <a class="btn btn-success btn-icon-split" href="{% url 'meetings:new_meeting' %}">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-check"></i>
+                                        </span>
+                    <span class="text">Create New Meeting</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
         function myFunction(mid) {
             console.log(mid);
             //var myButtons = document.querySelectorAll('.myclass');
@@ -42,7 +81,6 @@
             navigator.clipboard.writeText(copyText.value);
         alert("Meeting Link copied successfully to clipboard. ");
         }
-    </script>
 
-</body>
-</html>
+</script>
+{% endblock extra_js %}
