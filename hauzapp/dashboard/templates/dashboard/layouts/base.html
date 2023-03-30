@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    {% include 'dashboard/includes/head.html' %}
+
+    {% include 'dashboard/includes/styles.html' %}
+
+    {% block extrastyle %}{% endblock extrastyle %}
+
+</head>
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        {% include 'dashboard/includes/sidebar.html' %}
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                {% include 'dashboard/includes/header.html' %}
+
+                {% block content %}{% endblock content %}
+            </div>
+
+            {% block footer %}
+              {% include 'dashboard/includes/footer.html' %}
+            {% endblock footer %}
+        </div>
+        <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+  {% block loader %}
+    {% include 'dashboard/includes/loader.html' %}
+  {% endblock loader %}
+
+  {% include 'dashboard/includes/modal.html' %}
+
+  {% include 'dashboard/includes/scripts.html' %}
+
+  {% block extra_js %}{% endblock extra_js %}
+
+</body>
+</html>
